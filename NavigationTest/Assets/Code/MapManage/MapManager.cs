@@ -41,9 +41,9 @@ public class MapManager : MonoBehaviour
 
         GameObject objWallsRoot = new GameObject("WallsRoot");
         objWallsRoot.transform.SetParent(transform);
-        for (int i = 0, lenRow = (int)Mathf.Ceil(MaxRow / RectMeshCreater.MaxRow); i < lenRow; ++i)
+        for (int i = 0, lenRow = Mathf.CeilToInt(MaxRow / RectMeshCreater.MaxRow); i < lenRow; ++i)
         {
-            for (int j = 0, lenCol = (int)Mathf.Ceil(MaxCol / RectMeshCreater.MaxCol); j < lenCol; ++j)
+            for (int j = 0, lenCol = Mathf.CeilToInt(MaxCol / RectMeshCreater.MaxCol); j < lenCol; ++j)
             {
                 RectMeshCreater.GenerateParams param = new RectMeshCreater.GenerateParams()
                 {
@@ -65,6 +65,7 @@ public class MapManager : MonoBehaviour
         }
 
         GameObject objPlayer = Instantiate(Resources.Load<GameObject>("Prefabs/Myself"));
+        objPlayer.name = "Myself";
         objPlayer.transform.position = Vector3.zero;
     }
 

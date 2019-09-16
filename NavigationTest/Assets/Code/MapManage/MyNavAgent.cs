@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 
 public class MyNavAgent : MonoBehaviour
@@ -12,7 +13,10 @@ public class MyNavAgent : MonoBehaviour
         BFS,
         A_Star
     }
+
     public NavType navType = NavType.DFS;
+    public float fMoveCost = 0.1f;
+
     public MapManager.NavPoint CurrentPoint { get; private set; }
     public bool IsMoving { get; private set; }
     LinkedList<MapManager.NavPoint> moveRode;
@@ -28,21 +32,18 @@ public class MyNavAgent : MonoBehaviour
         CurrentPoint = MapManager.Instance.GetPoint(0, 0);
 
         objSign = Instantiate(Resources.Load<GameObject>("Prefabs/Sign"));
+        objSign.name = "Sign";
         objSign.transform.parent = MapManager.Instance.transform;
         objSign.SetActive(false);
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             RaycastHit hit;
             if (Physics.Raycast(cameraWorld.ScreenPointToRay(Input.mousePosition), out hit, 100, 1 << LayerMask.NameToLayer("Brick")))
-            {
-                //string[] name = hit.collider.transform.parent.name.Split('_');
-                //SetTarget(MapManager.Instance.GetPoint(int.Parse(name[0]), int.Parse(name[1])));
-                SetTarget(MapManager.Instance.GetPoint((int)Mathf.Ceil(hit.point.z - 0.5f), (int)Mathf.Ceil(hit.point.x - 0.5f)));
-            }
+                SetTarget(MapManager.Instance.GetPoint(Mathf.CeilToInt(hit.point.z - 0.5f), Mathf.CeilToInt(hit.point.x - 0.5f)));
         }
     }
 
@@ -56,19 +57,20 @@ public class MyNavAgent : MonoBehaviour
         switch (navType)
         {
             case NavType.DFS:
-                moveRode = DFS.Navagation(CurrentPoint, point);
+                moveRode = DFS.Navigation(CurrentPoint, point);
                 break;
             case NavType.BFS:
-                moveRode = BFS.Navagation(CurrentPoint, point);
+                moveRode = BFS.Navigation(CurrentPoint, point);
                 break;
             case NavType.A_Star:
-                moveRode = A_Star.Navagation(CurrentPoint, point);
+                moveRode = A_Star.Navigation(CurrentPoint, point);
                 break;
             default:
                 moveRode = null;
                 break;
         }
         stopWatch.Stop();
+        MainView.Instance.RefreshInfo(point.row, point.col, stopWatch.Elapsed.TotalMilliseconds);
         Debug.Log("Cost Time: " + stopWatch.Elapsed.TotalMilliseconds);
         if (!IsMoving)
             MoveToNextPoint();
@@ -90,7 +92,7 @@ public class MyNavAgent : MonoBehaviour
             MoveToNextPoint();
             return;
         }
-        Tweener tweener = transform.DOMove(point.position, 0.1f);
+        Tweener tweener = transform.DOMove(point.position, fMoveCost);
         tweener.SetEase(Ease.InOutQuad);
         tweener.onComplete = () => { IsMoving = false; MoveToNextPoint(); };
         IsMoving = true;

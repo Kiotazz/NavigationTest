@@ -21,7 +21,7 @@ public class A_Star
 
     static MapManager.NavPoint curTarget;
 
-    public static LinkedList<MapManager.NavPoint> Navagation(MapManager.NavPoint start, MapManager.NavPoint target)
+    public static LinkedList<MapManager.NavPoint> Navigation(MapManager.NavPoint start, MapManager.NavPoint target)
     {
         curTarget = target;
         dicClosedNodes.Clear();
@@ -49,19 +49,19 @@ public class A_Star
             if (curPoint.type != 0) continue;
 
             for (int i = 0, length = rowNeighbors.Length; i < length; ++i)
-                AddNeighbor(MapManager.Instance.GetPoint(curPoint.row + rowNeighbors[i], curPoint.col + colNeighbors[i]), curRecord);
+                AddChildPoint(MapManager.Instance.GetPoint(curPoint.row + rowNeighbors[i], curPoint.col + colNeighbors[i]), curRecord);
             listOpenNodes.Sort((a, b) => { return b.fScore.CompareTo(a.fScore); });
         }
         return listNavResult;
     }
 
-    static void AddNeighbor(MapManager.NavPoint neighbor, NodeRecord curRecord)
+    static void AddChildPoint(MapManager.NavPoint point, NodeRecord curRecord)
     {
-        if (!neighbor || dicClosedNodes.ContainsKey(neighbor)) return;
+        if (!point || dicClosedNodes.ContainsKey(point)) return;
         for (int i = 0, length = listOpenNodes.Count; i < length; ++i)
         {
             NodeRecord record = listOpenNodes[i];
-            if (record.point == neighbor)
+            if (record.point == point)
             {
                 if (curRecord.gScore < record.gScore)
                 {
@@ -72,10 +72,10 @@ public class A_Star
                 return;
             }
         }
-        int hScore = GetPointHScore(neighbor);
+        int hScore = GetPointHScore(point);
         listOpenNodes.Add(new NodeRecord()
         {
-            point = neighbor,
+            point = point,
             parentRecord = curRecord,
             hScore = hScore,
             gScore = curRecord.gScore + 1,
