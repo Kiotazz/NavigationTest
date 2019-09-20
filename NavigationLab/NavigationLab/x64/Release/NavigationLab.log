@@ -1,9 +1,14 @@
 ﻿  NavigationLab.cpp
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(129): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(107): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(127): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(204): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(221): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(225): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(288): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
     正在创建库 C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.lib 和对象 C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.exp
   正在生成代码
-  89 of 450 functions (19.8%) were compiled, the rest were copied from previous compilation.
-    88 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  14 of 502 functions ( 2.8%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   NavigationLab.vcxproj -> C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.dll

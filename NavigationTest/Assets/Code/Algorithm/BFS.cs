@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class BFS
+public static class BFS
 {
     class NodeRecord
     {
         public MapManager.NavPoint point;
-        public int parentIndex;
+        public NodeRecord parentRecord;
         public int hScore;
-        public NodeRecord(MapManager.NavPoint p, int parent)
+        public NodeRecord(MapManager.NavPoint p, NodeRecord parent)
         {
             point = p;
-            parentIndex = parent;
+            parentRecord = parent;
             hScore = Mathf.Abs(p.row - targetPoint.row) + Mathf.Abs(p.col - targetPoint.col);
         }
+        public static implicit operator bool(NodeRecord record) { return record != null; }
     }
     readonly static int[] rowNeighbors = new int[] { -1, 1, 0, 0 };
     readonly static int[] colNeighbors = new int[] { 0, 0, -1, 1 };
@@ -21,7 +22,7 @@ public class BFS
     static MapManager.NavPoint targetPoint;
     static LinkedList<MapManager.NavPoint> listNavResult = new LinkedList<MapManager.NavPoint>();
     static Dictionary<int, bool> dicClosedNodes = new Dictionary<int, bool>();
-    static List<NodeRecord> listOpenNodes = new List<NodeRecord>(MapManager.MaxRow * MapManager.MaxCol);
+    static LinkedList<NodeRecord> listOpenNodes = new LinkedList<NodeRecord>();
 
     public static LinkedList<MapManager.NavPoint> Navigation(MapManager.NavPoint start, MapManager.NavPoint target)
     {
@@ -29,33 +30,34 @@ public class BFS
         dicClosedNodes.Clear();
         listNavResult.Clear();
         listOpenNodes.Clear();
-        listOpenNodes.Add(new NodeRecord(start, -10086));
+        listOpenNodes.AddLast(new NodeRecord(start, null));
         List<NodeRecord> listNeighbors = new List<NodeRecord>(4);
-        int current = -1;
-        while (++current < listOpenNodes.Count)
+        while (listOpenNodes.Count > 0)
         {
-            MapManager.NavPoint point = listOpenNodes[current].point;
-            if (dicClosedNodes.ContainsKey(point.id)) continue;
-            dicClosedNodes[point.id] = true;
-            if (point == target)
+            NodeRecord curRecord = listOpenNodes.First.Value;
+            MapManager.NavPoint curPoint = curRecord.point;
+            listOpenNodes.RemoveFirst();
+            if (dicClosedNodes.ContainsKey(curPoint.id)) continue;
+            dicClosedNodes[curPoint.id] = true;
+            if (curPoint == target)
             {
-                do listNavResult.AddFirst(listOpenNodes[current].point);
-                while ((current = listOpenNodes[current].parentIndex) > -1);
+                do listNavResult.AddFirst(curRecord.point);
+                while (curRecord = curRecord.parentRecord);
                 return listNavResult;
             }
-            if (point.type != 0) continue;
+            if (curPoint.type != 0) continue;
 
             listNeighbors.Clear();
             for (int i = 0, length = rowNeighbors.Length; i < length; ++i)
             {
-                MapManager.NavPoint neighbor = MapManager.Instance.GetPoint(point.row + rowNeighbors[i], point.col + colNeighbors[i]);
+                MapManager.NavPoint neighbor = MapManager.Instance.GetPoint(curPoint.row + rowNeighbors[i], curPoint.col + colNeighbors[i]);
                 if (neighbor && !dicClosedNodes.ContainsKey(neighbor.id))
-                    listNeighbors.Add(new NodeRecord(neighbor, current));
+                    listNeighbors.Add(new NodeRecord(neighbor, curRecord));
             }
             listNeighbors.Sort((a, b) => { return a.hScore - b.hScore; });
 
             for (int i = 0, length = listNeighbors.Count; i < length; ++i)
-                listOpenNodes.Add(listNeighbors[i]);
+                listOpenNodes.AddLast(listNeighbors[i]);
         }
         return listNavResult;
     }

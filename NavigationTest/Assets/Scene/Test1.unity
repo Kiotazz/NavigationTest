@@ -1022,7 +1022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391d7777a39fee642b43e316a4362b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsNative: 0
+  IsNative: 1
 --- !u!4 &822068828
 Transform:
   m_ObjectHideFlags: 0

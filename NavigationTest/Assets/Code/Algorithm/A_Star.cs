@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class A_Star
+public static class A_Star
 {
     class NodeRecord
     {

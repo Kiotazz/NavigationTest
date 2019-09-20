@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class DFS
+public static class DFS
 {
     readonly static int[] rowNeighbors = new int[] { -1, 1, 0, 0 };
     readonly static int[] colNeighbors = new int[] { 0, 0, -1, 1 };
