@@ -101,7 +101,7 @@ public class MyNavAgent : MonoBehaviour
     {
         moveRode = null;
         objSign.SetActive(true);
-        objSign.transform.position = point.position;
+        objSign.transform.position = new Vector3(point.col, 0, point.row);
         System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
         stopWatch.Start();
         switch (navType)
@@ -137,12 +137,13 @@ public class MyNavAgent : MonoBehaviour
         }
         MapManager.NavPoint point = moveRode.First.Value;
         moveRode.RemoveFirst();
-        if (point.position == transform.position || point.type != 0)
+        Vector3 position = new Vector3(point.col, 0, point.row);
+        if (position == transform.position || point.type != 0)
         {
             MoveToNextPoint_Local();
             return;
         }
-        Tweener tweener = transform.DOMove(point.position, fMoveCost);
+        Tweener tweener = transform.DOMove(position, fMoveCost);
         tweener.SetEase(Ease.InOutQuad);
         tweener.onComplete = () => { IsMoving = false; MoveToNextPoint_Local(); };
         IsMoving = true;

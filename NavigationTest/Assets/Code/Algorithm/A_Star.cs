@@ -15,14 +15,16 @@ public class A_Star
             point = p;
             fScore = (Mathf.Abs(p.row - curTarget.row) + Mathf.Abs(p.col - curTarget.col)) + (gScore = (parentRecord = parent) == null ? 0 : parent.gScore + 1);
         }
+        public static implicit operator bool(NodeRecord record) { return record != null; }
     }
 
     readonly static int[] rowNeighbors = new int[] { -1, 1, 0, 0 };
     readonly static int[] colNeighbors = new int[] { 0, 0, -1, 1 };
 
     static LinkedList<MapManager.NavPoint> listNavResult = new LinkedList<MapManager.NavPoint>();
-    static Dictionary<MapManager.NavPoint, bool> dicClosedNodes = new Dictionary<MapManager.NavPoint, bool>();
+    static Dictionary<int, bool> dicClosedNodes = new Dictionary<int, bool>();
     static List<NodeRecord> listOpenNodes = new List<NodeRecord>(MapManager.MaxRow * MapManager.MaxCol);
+    static Dictionary<int, NodeRecord> dicOpenNodes = new Dictionary<int, NodeRecord>();
 
     static MapManager.NavPoint curTarget;
 
@@ -32,22 +34,23 @@ public class A_Star
         dicClosedNodes.Clear();
         listNavResult.Clear();
         listOpenNodes.Clear();
-        listOpenNodes.Add(new NodeRecord(start, null));
+        dicOpenNodes.Clear();
+        NodeRecord record = new NodeRecord(start, null);
+        listOpenNodes.Add(record);
+        dicOpenNodes[start.id] = record;
         while (listOpenNodes.Count > 0)
         {
             NodeRecord curRecord = listOpenNodes[listOpenNodes.Count - 1];
             MapManager.NavPoint curPoint = curRecord.point;
             listOpenNodes.RemoveAt(listOpenNodes.Count - 1);
-            if (dicClosedNodes.ContainsKey(curPoint)) continue;
-            dicClosedNodes[curPoint] = true;
+            dicOpenNodes.Remove(curPoint.id);
+            if (dicClosedNodes.ContainsKey(curPoint.id)) continue;
+            dicClosedNodes[curPoint.id] = true;
 
             if (curPoint == target)
             {
-                while (curRecord != null)
-                {
-                    listNavResult.AddFirst(curRecord.point);
-                    curRecord = curRecord.parentRecord;
-                }
+                do listNavResult.AddFirst(curRecord.point);
+                while (curRecord = curRecord.parentRecord);
                 return listNavResult;
             }
             if (curPoint.type != 0) continue;
@@ -61,20 +64,19 @@ public class A_Star
 
     static void AddChildPoint(MapManager.NavPoint point, NodeRecord curRecord)
     {
-        if (!point || dicClosedNodes.ContainsKey(point)) return;
-        for (int i = 0, length = listOpenNodes.Count; i < length; ++i)
+        if (!point || dicClosedNodes.ContainsKey(point.id)) return;
+        if (dicOpenNodes.ContainsKey(point.id))
         {
-            NodeRecord record = listOpenNodes[i];
-            if (record.point == point)
+            NodeRecord record = dicOpenNodes[point.id];
+            if (curRecord.gScore < record.gScore)
             {
-                if (curRecord.gScore < record.gScore)
-                {
-                    record.parentRecord = curRecord;
-                    record.fScore = record.hScore + (record.gScore = curRecord.gScore + 1);
-                }
-                return;
+                record.parentRecord = curRecord;
+                record.fScore = record.hScore + (record.gScore = curRecord.gScore + 1);
             }
+            return;
         }
-        listOpenNodes.Add(new NodeRecord(point, curRecord));
+        NodeRecord newRecord = new NodeRecord(point, curRecord);
+        listOpenNodes.Add(newRecord);
+        dicOpenNodes[point.id] = newRecord;
     }
 }

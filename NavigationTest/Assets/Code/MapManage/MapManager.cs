@@ -12,10 +12,10 @@ public class MapManager : MonoBehaviour
 
     public class NavPoint
     {
+        public int id;
         public int row;
         public int col;
         public int type;
-        public Vector3 position;
 
         public static implicit operator bool(NavPoint point) { return point != null; }
     }
@@ -76,12 +76,13 @@ public class MapManager : MonoBehaviour
 
     void InitLocal()
     {
+        int curID = 0;
         for (int i = 0; i < MaxRow; ++i)
         {
             List<NavPoint> col = new List<NavPoint>();
             mapData.Add(col);
             for (int j = 0; j < MaxCol; ++j)
-                col.Add(new NavPoint() { row = i, col = j, position = new Vector3(j, 0, i), type = IsBrickCanPass(i, j) ? 0 : 1 });
+                col.Add(new NavPoint() {id = ++curID, row = i, col = j, type = IsBrickCanPass(i, j) ? 0 : 1 });
         }
     }
 

@@ -20,7 +20,7 @@ public class BFS
 
     static MapManager.NavPoint targetPoint;
     static LinkedList<MapManager.NavPoint> listNavResult = new LinkedList<MapManager.NavPoint>();
-    static Dictionary<MapManager.NavPoint, bool> dicClosedNodes = new Dictionary<MapManager.NavPoint, bool>();
+    static Dictionary<int, bool> dicClosedNodes = new Dictionary<int, bool>();
     static List<NodeRecord> listOpenNodes = new List<NodeRecord>(MapManager.MaxRow * MapManager.MaxCol);
 
     public static LinkedList<MapManager.NavPoint> Navigation(MapManager.NavPoint start, MapManager.NavPoint target)
@@ -35,15 +35,12 @@ public class BFS
         while (++current < listOpenNodes.Count)
         {
             MapManager.NavPoint point = listOpenNodes[current].point;
-            if (dicClosedNodes.ContainsKey(point)) continue;
-            dicClosedNodes[point] = true;
+            if (dicClosedNodes.ContainsKey(point.id)) continue;
+            dicClosedNodes[point.id] = true;
             if (point == target)
             {
-                while (current > -1)
-                {
-                    listNavResult.AddFirst(listOpenNodes[current].point);
-                    current = listOpenNodes[current].parentIndex;
-                }
+                do listNavResult.AddFirst(listOpenNodes[current].point);
+                while ((current = listOpenNodes[current].parentIndex) > -1);
                 return listNavResult;
             }
             if (point.type != 0) continue;
@@ -52,7 +49,7 @@ public class BFS
             for (int i = 0, length = rowNeighbors.Length; i < length; ++i)
             {
                 MapManager.NavPoint neighbor = MapManager.Instance.GetPoint(point.row + rowNeighbors[i], point.col + colNeighbors[i]);
-                if (neighbor && !dicClosedNodes.ContainsKey(neighbor))
+                if (neighbor && !dicClosedNodes.ContainsKey(neighbor.id))
                     listNeighbors.Add(new NodeRecord(neighbor, current));
             }
             listNeighbors.Sort((a, b) => { return a.hScore - b.hScore; });

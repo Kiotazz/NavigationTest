@@ -8,7 +8,7 @@ public class DFS
 
     static MapManager.NavPoint curTarget;
     static LinkedList<MapManager.NavPoint> listNavResult = new LinkedList<MapManager.NavPoint>();
-    static Dictionary<MapManager.NavPoint, bool> dicClosedNodes = new Dictionary<MapManager.NavPoint, bool>();
+    static Dictionary<int, bool> dicClosedNodes = new Dictionary<int, bool>();
 
     public static LinkedList<MapManager.NavPoint> Navigation(MapManager.NavPoint start, MapManager.NavPoint target)
     {
@@ -21,7 +21,7 @@ public class DFS
 
     static bool FindNextPoint(MapManager.NavPoint point)
     {
-        dicClosedNodes[point] = true;
+        dicClosedNodes[point.id] = true;
         if (point == curTarget)
         {
             listNavResult.AddFirst(point);
@@ -42,7 +42,7 @@ public class DFS
 
         for (int i = 0, length = listNeighbors.Count; i < length; ++i)
         {
-            if (!dicClosedNodes.ContainsKey(listNeighbors[i]) && FindNextPoint(listNeighbors[i]))
+            if (!dicClosedNodes.ContainsKey(listNeighbors[i].id) && FindNextPoint(listNeighbors[i]))
             {
                 listNavResult.AddFirst(point);
                 return true;
