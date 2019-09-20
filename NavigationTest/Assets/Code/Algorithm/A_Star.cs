@@ -10,6 +10,11 @@ public class A_Star
         public int hScore;
         public int gScore;
         public int fScore;
+        public NodeRecord(MapManager.NavPoint p, NodeRecord parent)
+        {
+            point = p;
+            fScore = (Mathf.Abs(p.row - curTarget.row) + Mathf.Abs(p.col - curTarget.col)) + (gScore = (parentRecord = parent) == null ? 0 : parent.gScore + 1);
+        }
     }
 
     readonly static int[] rowNeighbors = new int[] { -1, 1, 0, 0 };
@@ -27,8 +32,7 @@ public class A_Star
         dicClosedNodes.Clear();
         listNavResult.Clear();
         listOpenNodes.Clear();
-        int hScore = GetPointHScore(start);
-        listOpenNodes.Add(new NodeRecord() { point = start, parentRecord = null, gScore = 0, hScore = hScore, fScore = hScore });
+        listOpenNodes.Add(new NodeRecord(start, null));
         while (listOpenNodes.Count > 0)
         {
             NodeRecord curRecord = listOpenNodes[listOpenNodes.Count - 1];
@@ -50,7 +54,7 @@ public class A_Star
 
             for (int i = 0, length = rowNeighbors.Length; i < length; ++i)
                 AddChildPoint(MapManager.Instance.GetPoint(curPoint.row + rowNeighbors[i], curPoint.col + colNeighbors[i]), curRecord);
-            listOpenNodes.Sort((a, b) => { return b.fScore.CompareTo(a.fScore); });
+            listOpenNodes.Sort((a, b) => { return b.fScore - a.fScore; });
         }
         return listNavResult;
     }
@@ -66,25 +70,11 @@ public class A_Star
                 if (curRecord.gScore < record.gScore)
                 {
                     record.parentRecord = curRecord;
-                    record.gScore = curRecord.gScore + 1;
-                    record.fScore = record.hScore + record.gScore;
+                    record.fScore = record.hScore + (record.gScore = curRecord.gScore + 1);
                 }
                 return;
             }
         }
-        int hScore = GetPointHScore(point);
-        listOpenNodes.Add(new NodeRecord()
-        {
-            point = point,
-            parentRecord = curRecord,
-            hScore = hScore,
-            gScore = curRecord.gScore + 1,
-            fScore = hScore + curRecord.gScore + 1
-        });
-    }
-
-    static int GetPointHScore(MapManager.NavPoint point)
-    {
-        return Mathf.Abs(point.row - curTarget.row) + Mathf.Abs(point.col - curTarget.col);
+        listOpenNodes.Add(new NodeRecord(point, curRecord));
     }
 }

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
+    public bool IsNative = true;
+
     public static MapManager Instance;
 
     public const int MaxRow = 1000;
@@ -23,13 +25,10 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        for (int i = 0; i < MaxRow; ++i)
-        {
-            List<NavPoint> col = new List<NavPoint>();
-            mapData.Add(col);
-            for (int j = 0; j < MaxCol; ++j)
-                col.Add(new NavPoint() { row = i, col = j, position = new Vector3(j, 0, i), type = IsBrickCanPass(i, j) ? 0 : 1 });
-        }
+        if (IsNative)
+            NavLibrary.InitMap(MaxRow, MaxCol);
+        else
+            InitLocal();
 
         GameObject objPrefab = Resources.Load<GameObject>("Prefabs/Brick");
         GameObject objBrick = Instantiate(objPrefab, transform);
@@ -56,6 +55,12 @@ public class MapManager : MonoBehaviour
                     parent = objWallsRoot.transform,
                     cbIsGenerateCell = (cellRow, cellCol) =>
                     {
+                        if (IsNative)
+                        {
+                            bool canPass = IsBrickCanPass(cellRow, cellCol);
+                            if (!canPass) NavLibrary.SetPointObstacle(cellRow, cellCol);
+                            return !canPass;
+                        }
                         NavPoint point = GetPoint(cellRow, cellCol);
                         return point && point.type != 0;
                     }
@@ -67,6 +72,17 @@ public class MapManager : MonoBehaviour
         GameObject objPlayer = Instantiate(Resources.Load<GameObject>("Prefabs/Myself"));
         objPlayer.name = "Myself";
         objPlayer.transform.position = Vector3.zero;
+    }
+
+    void InitLocal()
+    {
+        for (int i = 0; i < MaxRow; ++i)
+        {
+            List<NavPoint> col = new List<NavPoint>();
+            mapData.Add(col);
+            for (int j = 0; j < MaxCol; ++j)
+                col.Add(new NavPoint() { row = i, col = j, position = new Vector3(j, 0, i), type = IsBrickCanPass(i, j) ? 0 : 1 });
+        }
     }
 
     public NavPoint GetPoint(int row, int col)

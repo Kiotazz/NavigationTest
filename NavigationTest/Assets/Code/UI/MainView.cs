@@ -19,7 +19,7 @@ public class MainView : MonoBehaviour
     {
         int row = string.IsNullOrEmpty(inputRow.text) ? 0 : int.Parse(inputRow.text);
         int col = string.IsNullOrEmpty(inputCol.text) ? 0 : int.Parse(inputCol.text);
-        MyNavAgent.Instance.SetTarget(MapManager.Instance.GetPoint(row, col));
+        MyNavAgent.Instance.SetTarget(row, col);
     }
 
     public void RefreshInfo(int row, int col, double time)
@@ -43,13 +43,13 @@ public class MainView : MonoBehaviour
         switch (dropNavType.captionText.text)
         {
             case "DFS":
-                MyNavAgent.Instance.navType = MyNavAgent.NavType.DFS;
+                MyNavAgent.Instance.navType = NavLibrary.Algorithm.DFS;
                 break;
             case "BFS":
-                MyNavAgent.Instance.navType = MyNavAgent.NavType.BFS;
+                MyNavAgent.Instance.navType = NavLibrary.Algorithm.BFS;
                 break;
             default:
-                MyNavAgent.Instance.navType = MyNavAgent.NavType.A_Star;
+                MyNavAgent.Instance.navType = NavLibrary.Algorithm.A_Star;
                 break;
         }
     }
