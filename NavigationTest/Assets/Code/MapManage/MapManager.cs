@@ -21,12 +21,13 @@ public class MapManager : MonoBehaviour
     }
 
     public List<List<NavPoint>> mapData = new List<List<NavPoint>>();
+    Dictionary<int, bool> dicObstacles = new Dictionary<int, bool>();
 
     private void Start()
     {
         Instance = this;
         if (IsNative)
-            NavLibrary.InitMap(MaxRow, MaxCol);
+            InitNative();
         else
             InitLocal();
 
@@ -55,12 +56,7 @@ public class MapManager : MonoBehaviour
                     parent = objWallsRoot.transform,
                     cbIsGenerateCell = (cellRow, cellCol) =>
                     {
-                        if (IsNative)
-                        {
-                            bool canPass = IsBrickCanPass(cellRow, cellCol);
-                            if (!canPass) NavLibrary.SetPointObstacle(cellRow, cellCol);
-                            return !canPass;
-                        }
+                        if (IsNative) return dicObstacles.ContainsKey(GetPointID(cellRow, cellCol));
                         NavPoint point = GetPoint(cellRow, cellCol);
                         return point && point.type != 0;
                     }
@@ -74,6 +70,22 @@ public class MapManager : MonoBehaviour
         objPlayer.transform.position = Vector3.zero;
     }
 
+    void InitNative()
+    {
+        NavLibrary.InitMap(MaxRow, MaxCol);
+        for (int i = 0; i < MaxRow; ++i)
+        {
+            for (int j = 0; j < MaxCol; ++j)
+            {
+                if (!IsBrickCanPass(i, j))
+                {
+                    NavLibrary.SetPointObstacle(i, j);
+                    dicObstacles[GetPointID(i, j)] = true;
+                }
+            }
+        }
+    }
+
     void InitLocal()
     {
         int curID = 0;
@@ -82,7 +94,9 @@ public class MapManager : MonoBehaviour
             List<NavPoint> col = new List<NavPoint>();
             mapData.Add(col);
             for (int j = 0; j < MaxCol; ++j)
-                col.Add(new NavPoint() {id = ++curID, row = i, col = j, type = IsBrickCanPass(i, j) ? 0 : 1 });
+            {
+                col.Add(new NavPoint() { id = ++curID, row = i, col = j, type = IsBrickCanPass(i, j) ? 0 : 1 });
+            }
         }
     }
 
@@ -92,10 +106,12 @@ public class MapManager : MonoBehaviour
         return mapData[row][col];
     }
 
-    public static bool IsBrickCanPass(int row, int col)
+    bool IsBrickCanPass(int row, int col)
     {
-        return row == 0 && col == 0 ? true : Random.Range(0, 10) > 0;
+        return row == 0 && col == 0 ? true : Random.Range(0, 8) > 0;
         //int total = row + col;
         //return total % 2 == 0 || total % 3 == 0 || total % 7 == 0;
     }
+
+    public static int GetPointID(int row, int col) { return row * MaxCol + col; }
 }
