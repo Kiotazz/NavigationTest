@@ -20,9 +20,6 @@ public class NavLibrary
     public static extern void SetPointObstacle(int row, int col);
 
     [DllImport("NavigationLab")]
-    public static extern int TestMethod();
-
-    [DllImport("NavigationLab")]
     static extern IntPtr Navigation_DFS(int startRow, int startCol, int targetRow, int targetCol, ref int size);
 
     [DllImport("NavigationLab")]

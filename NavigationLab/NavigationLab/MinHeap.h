@@ -24,6 +24,11 @@ public:
 
 	virtual ~MinHeap() {}
 
+	void reserve(unsigned int cap)
+	{
+		m_stHeap.reserve(cap);
+	}
+
 	void ConstructHeap(const std::vector<T>& data)
 	{
 		m_stHeap = data;

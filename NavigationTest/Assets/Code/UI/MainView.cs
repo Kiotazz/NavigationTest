@@ -17,8 +17,10 @@ public class MainView : MonoBehaviour
 
     public void OnBtnConfirm()
     {
-        int row = string.IsNullOrEmpty(inputRow.text) ? 0 : int.Parse(inputRow.text);
-        int col = string.IsNullOrEmpty(inputCol.text) ? 0 : int.Parse(inputCol.text);
+        int row = Mathf.Clamp(string.IsNullOrEmpty(inputRow.text) ? 0 : int.Parse(inputRow.text), 0, MapManager.MaxRow - 1);
+        int col = Mathf.Clamp(string.IsNullOrEmpty(inputCol.text) ? 0 : int.Parse(inputCol.text), 0, MapManager.MaxCol - 1);
+        inputRow.text = row.ToString();
+        inputCol.text = col.ToString();
         MyNavAgent.Instance.SetTarget(row, col);
     }
 
