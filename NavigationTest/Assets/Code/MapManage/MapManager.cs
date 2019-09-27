@@ -61,7 +61,7 @@ public class MapManager : MonoBehaviour
                         return point && point.type != 0;
                     }
                 };
-                RectMeshCreater.GenerateRectObj(new Vector3(j * RectMeshCreater.MaxCol, 0, i * RectMeshCreater.MaxRow), param);
+                RectMeshCreater.GenerateRectObj(new Vector3(j * RectMeshCreater.MaxCol, 0.01f, i * RectMeshCreater.MaxRow), param);
             }
         }
 

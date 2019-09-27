@@ -24,6 +24,11 @@ public class MainView : MonoBehaviour
         MyNavAgent.Instance.SetTarget(row, col);
     }
 
+    public void OnBtnShowRoad()
+    {
+        MyNavAgent.Instance.ShowRoad();
+    }
+
     public void RefreshInfo(int row, int col, double time)
     {
         txtTimeCost.text = "用时：" + time + "ms";

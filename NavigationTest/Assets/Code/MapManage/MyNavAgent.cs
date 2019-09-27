@@ -12,6 +12,8 @@ public class MyNavAgent : MonoBehaviour
 
     public bool IsMoving { get; private set; }
 
+    Dictionary<int, bool> dicNavWay = new Dictionary<int, bool>();
+    MeshFilter mfPath = null;
     Camera cameraWorld;
     GameObject objSign;
 
@@ -40,6 +42,8 @@ public class MyNavAgent : MonoBehaviour
             if (Physics.Raycast(cameraWorld.ScreenPointToRay(Input.mousePosition), out hit, 100, 1 << LayerMask.NameToLayer("Brick")))
                 SetTarget(Mathf.CeilToInt(hit.point.z - 0.5f), Mathf.CeilToInt(hit.point.x - 0.5f));
         }
+        float axis = Input.GetAxis("Mouse ScrollWheel");
+        if (!axis.Equals(0)) cameraWorld.transform.Translate(new Vector3(0, 0, axis * 4.2f));
     }
 
     public void SetTarget(int row, int col)
@@ -50,14 +54,21 @@ public class MyNavAgent : MonoBehaviour
             SetTarget_Local(MapManager.Instance.GetPoint(row, col));
     }
 
+    public void ShowRoad()
+    {
+        if (MapManager.Instance.IsNative)
+            ShowRoad_Native();
+    }
+
 
     int curRow = 0;
     int curCol = 0;
     int curStep = 0;
 
-    public void SetTarget_Native(int row, int col)
+    void SetTarget_Native(int row, int col)
     {
         moveRode = null;
+        if (mfPath) mfPath.gameObject.SetActive(false);
         objSign.SetActive(true);
         objSign.transform.position = new Vector3(col, 0, row);
         System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
@@ -93,11 +104,43 @@ public class MyNavAgent : MonoBehaviour
         IsMoving = true;
     }
 
+    void ShowRoad_Native()
+    {
+        dicNavWay.Clear();
+        int row = 0, col = 0, step = -1;
+        int minRow = int.MaxValue, minCol = int.MaxValue, maxRow = int.MinValue, maxCol = int.MinValue;
+        while (NavLibrary.GetPoint(++step, ref row, ref col))
+        {
+            if (row < minRow) minRow = row;
+            if (col < minCol) minCol = col;
+            if (row > maxRow) maxRow = row;
+            if (col > maxCol) maxCol = col;
+            dicNavWay[MapManager.GetPointID(row, col)] = true;
+        }
+        RectMeshCreater.GenerateParams param = new RectMeshCreater.GenerateParams()
+        {
+            row = maxRow - minRow + 1,
+            col = maxCol - minCol + 1,
+            startRow = minRow,
+            startCol = minCol,
+            materialPath = "Assets/Resources/Materials/PathMat.mat",
+            objName = "Path",
+            mfOperate = mfPath,
+            parent = MapManager.Instance.transform,
+            cbIsGenerateCell = (cellRow, cellCol) =>
+            {
+                return dicNavWay.ContainsKey(MapManager.GetPointID(cellRow, cellCol));
+            }
+        };
+        mfPath = RectMeshCreater.GenerateRectObj(new Vector3(minCol, 0.02f, minRow), param);
+        mfPath.gameObject.SetActive(true);
+    }
+
 
     MapManager.NavPoint currentPoint;
     LinkedList<MapManager.NavPoint> moveRode;
 
-    public void SetTarget_Local(MapManager.NavPoint point)
+    void SetTarget_Local(MapManager.NavPoint point)
     {
         moveRode = null;
         objSign.SetActive(true);

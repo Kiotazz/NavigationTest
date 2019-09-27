@@ -21,6 +21,7 @@ public class RectMeshCreater : MonoBehaviour
         public int startCol;
         public string materialPath;
         public string objName;
+        public MeshFilter mfOperate;
         public Transform parent;
         public JudgeCellAvaliable cbIsGenerateCell;
     }
@@ -29,11 +30,11 @@ public class RectMeshCreater : MonoBehaviour
     const float HalfCellWidth = 0.5f;
     const int GenerateLayer = 30;
 
-    static List<Vector3> vertices;
-    static List<Vector2> UV;
-    static List<int> triangles;
+    static List<Vector3> vertices = new List<Vector3>();
+    static List<Vector2> UV = new List<Vector2>();
+    static List<int> triangles = new List<int>();
 
-    static Dictionary<int, Dictionary<int, bool>> dicProcessedRecord;
+    static Dictionary<int, bool> dicProcessedRecord = new Dictionary<int, bool>();
 
     static GenerateParams generateParams;
     static Vector3 vecOrigin = Vector3.zero;
@@ -42,19 +43,17 @@ public class RectMeshCreater : MonoBehaviour
 
     public string generateMaterialPath = "Assets/Resources/Materials/WallMat.mat";
 
-    public static GameObject GenerateRectObj(Vector3 origin, GenerateParams gParams)
+    public static MeshFilter GenerateRectObj(Vector3 origin, GenerateParams gParams)
     {
         nRow = gParams.row;
         nCol = gParams.col;
         generateParams = gParams;
         vecOrigin = Vector3.zero;
 
-        vertices = new List<Vector3>();
-        triangles = new List<int>();
-        UV = new List<Vector2>();
-        dicProcessedRecord = new Dictionary<int, Dictionary<int, bool>>();
-        for (int i = 0; i < nRow; ++i)
-            dicProcessedRecord[i] = new Dictionary<int, bool>();
+        vertices.Clear();
+        triangles.Clear();
+        UV.Clear();
+        dicProcessedRecord.Clear();
 
         int rectCount = 0;
         for (int i = 0; i < nCol; ++i)
@@ -63,41 +62,45 @@ public class RectMeshCreater : MonoBehaviour
                     ++rectCount;
         Debug.Log("Generate Rect Num: " + rectCount);
 
-        Mesh mesh = new Mesh();
+        Mesh mesh = null;
+        if (gParams.mfOperate)
+        {
+            mesh = gParams.mfOperate.mesh;
+            mesh.Clear();
+        }
+        else
+        {
+            GameObject go = new GameObject(gParams.objName);
+            //分配mesh
+            gParams.mfOperate = go.AddComponent<MeshFilter>();
+            gParams.mfOperate.mesh = mesh = new Mesh();
+            //分配材质
+            MeshRenderer mr = go.GetComponent<MeshRenderer>();
+            if (!mr) mr = go.AddComponent<MeshRenderer>();
+            mr.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(gParams.materialPath);
+
+            if (gParams.parent) go.transform.SetParent(gParams.parent);
+        }
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.uv = UV.ToArray();
 
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
-
-        GameObject go = new GameObject();
-        go.name = gParams.objName;
-        //分配mesh
-        MeshFilter mf = go.AddComponent<MeshFilter>();
-        mf.mesh = mesh;
         mesh.RecalculateNormals();
-        //分配材质
-        MeshRenderer mr = go.GetComponent<MeshRenderer>();
-        if (!mr) mr = go.AddComponent<MeshRenderer>();
 
-        Material myMat = AssetDatabase.LoadAssetAtPath<Material>(gParams.materialPath);
-        mr.sharedMaterial = myMat;
+        gParams.mfOperate.transform.position = origin;
 
-        go.transform.position = origin + new Vector3(0, 0.01f, 0);
-        if (gParams.parent)
-            go.transform.SetParent(gParams.parent);
-
-        return go;
+        return gParams.mfOperate;
     }
 
     static bool GenerateSingleRect(int startX, int startZ)
     {
-        if (dicProcessedRecord[startZ].ContainsKey(startX) || !IsCellAvaliable(startZ, startX)) return false;
+        if (dicProcessedRecord.ContainsKey(GetPointID(startZ, startX)) || !IsCellAvaliable(startZ, startX)) return false;
         int width = GetRowWidth(startX, startZ);
         int endZ = startZ + 1;
         for (; endZ < nRow; ++endZ)
-            if (dicProcessedRecord[endZ].ContainsKey(startX) || !IsCellAvaliable(endZ, startX) || GetRowWidth(startX, endZ) < width)
+            if (dicProcessedRecord.ContainsKey(GetPointID(endZ, startX)) || !IsCellAvaliable(endZ, startX) || GetRowWidth(startX, endZ) < width)
                 break;
 
         Vector3 vecStartPos = vecOrigin;
@@ -125,7 +128,7 @@ public class RectMeshCreater : MonoBehaviour
 
         for (int i = 0; i < width; ++i)
             for (int j = startZ; j < endZ; ++j)
-                dicProcessedRecord[j][startX + i] = true;
+                dicProcessedRecord[GetPointID(j, startX + i)] = true;
 
         return true;
     }
@@ -135,7 +138,7 @@ public class RectMeshCreater : MonoBehaviour
         int colCounter = 0;
         for (int i = startX; i < nCol; ++i)
         {
-            if (dicProcessedRecord[z].ContainsKey(i) || !IsCellAvaliable(z, i))
+            if (dicProcessedRecord.ContainsKey(GetPointID(z, i)) || !IsCellAvaliable(z, i))
                 return colCounter;
             else
                 ++colCounter;
@@ -147,4 +150,6 @@ public class RectMeshCreater : MonoBehaviour
     {
         return generateParams.cbIsGenerateCell(generateParams.startRow + row, generateParams.startCol + col);
     }
+
+    public static int GetPointID(int row, int col) { return row * nCol + col; }
 }
