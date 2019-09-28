@@ -64,10 +64,12 @@ public class MyNavAgent : MonoBehaviour
     int curRow = 0;
     int curCol = 0;
     int curStep = 0;
+    bool bPathGenerated = false;
 
     void SetTarget_Native(int row, int col)
     {
         moveRode = null;
+        bPathGenerated = false;
         if (mfPath) mfPath.gameObject.SetActive(false);
         objSign.SetActive(true);
         objSign.transform.position = new Vector3(col, 0, row);
@@ -106,6 +108,16 @@ public class MyNavAgent : MonoBehaviour
 
     void ShowRoad_Native()
     {
+        if (mfPath && mfPath.gameObject.activeSelf)
+        {
+            mfPath.gameObject.SetActive(false);
+            return;
+        }
+        if (bPathGenerated && mfPath)
+        {
+            mfPath.gameObject.SetActive(true);
+            return;
+        }
         dicNavWay.Clear();
         int row = 0, col = 0, step = -1;
         int minRow = int.MaxValue, minCol = int.MaxValue, maxRow = int.MinValue, maxCol = int.MinValue;
@@ -134,6 +146,7 @@ public class MyNavAgent : MonoBehaviour
         };
         mfPath = RectMeshCreater.GenerateRectObj(new Vector3(minCol, 0.02f, minRow), param);
         mfPath.gameObject.SetActive(true);
+        bPathGenerated = true;
     }
 
 
