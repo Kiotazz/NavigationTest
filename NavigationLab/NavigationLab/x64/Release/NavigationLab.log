@@ -1,15 +1,15 @@
 ﻿  NavigationLab.cpp
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(167): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(184): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(179): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(188): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
 c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(198): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
 c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(239): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
 c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(248): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(293): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(303): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(291): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(301): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
 c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(100): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
   c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(99): note: 编译 类 模板 成员函数 "void MinHeap<PointRecord_AStar>::heapifyTopDown(unsigned int)" 时
   c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(56): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::heapifyTopDown(unsigned int)”的引用
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(87): note: 参见对正在编译的 类 模板 实例化 "MinHeap<PointRecord_AStar>" 的引用
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(86): note: 参见对正在编译的 类 模板 实例化 "MinHeap<PointRecord_AStar>" 的引用
 c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(74): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
   c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(67): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Emplace<PointRecord_AStar>(Valt &&)”的引用
           with
@@ -33,8 +33,8 @@ c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\n
           ]
     正在创建库 C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.lib 和对象 C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.exp
   正在生成代码
-  3 of 768 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    10 functions had inline decision re-evaluated but remain unchanged
+  3 of 767 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    17 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   NavigationLab.vcxproj -> C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.dll

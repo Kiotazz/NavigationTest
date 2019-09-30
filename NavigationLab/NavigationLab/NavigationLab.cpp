@@ -21,7 +21,6 @@ inline bool IsTargetPoint(const int row, const int col) { return row == tarRow &
 inline int GetPointID(const int row, const int col) { return row * maxCol + col; }
 inline bool IsPointValid(const int row, const int col) { return row > -1 && row < maxRow && col > -1 && col < maxCol; }
 inline bool IsPointCanPass(const int row, const int col) { return mapObstacles.find(GetPointID(row, col)) == mapObstacles.end(); }
-inline bool IsPointCanPassByID(const int id) { return mapObstacles.find(id) == mapObstacles.end(); }
 inline int GetPointHScore(const int row, const int col) { return abs(row - tarRow) + abs(col - tarCol); }
 
 
@@ -156,23 +155,19 @@ EX(int*) Navigation_DFS(int startRow, int startCol, int targetRow, int targetCol
 	for (list<PointRecord_DFS>::iterator it = listOpenNodes_DFS.begin(), end = listOpenNodes_DFS.end(); it != end; ++it)
 	{
 		int curPointID = GetPointID(it->row, it->col);
+		if (mapClosedNodes_DFS.find(curPointID) != mapClosedNodes_DFS.end()) continue;
 		mapClosedNodes_DFS[curPointID] = &*it;
 		vecNeighbors.clear();
 		for (int i = 0; i < 4; ++i)
-			if (IsPointValid(it->row + rowNeighbors[i], it->col + colNeighbors[i]))
-				vecNeighbors.push_back(PointRecord_DFS(it->row + rowNeighbors[i], it->col + colNeighbors[i], curPointID));
-		sort(vecNeighbors.begin(), vecNeighbors.end());
-		list<PointRecord_DFS>::iterator it2 = it;
-		bool isEnd = ++it2 == end;
-		for (int i = 0, length = vecNeighbors.size(); i < length; ++i)
 		{
-			int childPointID = GetPointID(vecNeighbors[i].row, vecNeighbors[i].col);
-			if (IsTargetPoint(vecNeighbors[i].row, vecNeighbors[i].col))
+			int row = it->row + rowNeighbors[i], col = it->col + colNeighbors[i];
+			if (!IsPointValid(row, col) || mapClosedNodes_DFS.find(GetPointID(row, col)) != mapClosedNodes_DFS.end()) continue;
+			if (IsTargetPoint(row, col))
 			{
-				if (IsPointCanPassByID(childPointID))
+				if (IsPointCanPass(row, col))
 				{
-					vecNavResult.push_back(vecNeighbors[i].row);
-					vecNavResult.push_back(vecNeighbors[i].col);
+					vecNavResult.push_back(row);
+					vecNavResult.push_back(col);
 				}
 				do
 				{
@@ -184,13 +179,18 @@ EX(int*) Navigation_DFS(int startRow, int startCol, int targetRow, int targetCol
 				size = vecNavResult.size() / 2;
 				return &vecNavResult[0];
 			}
-			if (IsPointCanPassByID(childPointID) && mapClosedNodes_DFS.find(childPointID) == mapClosedNodes_DFS.end())
-			{
-				if (isEnd)
-					listOpenNodes_DFS.push_back(std::move(vecNeighbors[i]));
-				else
-					listOpenNodes_DFS.insert(it2, std::move(vecNeighbors[i]));
-			}
+			if (IsPointCanPass(row, col))
+				vecNeighbors.push_back(PointRecord_DFS(row, col, curPointID));
+		}
+		sort(vecNeighbors.begin(), vecNeighbors.end());
+		list<PointRecord_DFS>::iterator it2 = it;
+		bool isEnd = ++it2 == end;
+		for (int i = 0, length = vecNeighbors.size(); i < length; ++i)
+		{
+			if (isEnd)
+				listOpenNodes_DFS.push_back(std::move(vecNeighbors[i]));
+			else
+				listOpenNodes_DFS.insert(it2, std::move(vecNeighbors[i]));
 		}
 	}
 	listOpenNodes_DFS.clear();
@@ -281,12 +281,10 @@ EX(int*) Navigation_AStar(int startRow, int startCol, int targetRow, int targetC
 				}
 				vecNavResult.push_back(curRecord.row);
 				vecNavResult.push_back(curRecord.col);
-				for (int curIndex = curRecord.parentIndex; curIndex > -1; )
+				for (int curIndex = curRecord.parentIndex; curIndex > -1; curIndex = mapClosedNodes_AStar[curIndex].parentIndex)
 				{
-					const PointRecord_AStar& ptrRecord = mapClosedNodes_AStar[curIndex];
-					vecNavResult.push_back(ptrRecord.row);
-					vecNavResult.push_back(ptrRecord.col);
-					curIndex = ptrRecord.parentIndex;
+					vecNavResult.push_back(mapClosedNodes_AStar[curIndex].row);
+					vecNavResult.push_back(mapClosedNodes_AStar[curIndex].col);
 				}
 				heapOpenNodes_AStar.clear();
 				mapClosedNodes_AStar.clear();
