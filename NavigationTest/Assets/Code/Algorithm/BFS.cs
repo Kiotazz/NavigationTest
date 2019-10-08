@@ -45,7 +45,7 @@ public static class BFS
                 while (curRecord = curRecord.parentRecord);
                 return listNavResult;
             }
-            if (curPoint.type != 0) continue;
+            if (curPoint.type < 1) continue;
 
             listNeighbors.Clear();
             for (int i = 0, length = rowNeighbors.Length; i < length; ++i)

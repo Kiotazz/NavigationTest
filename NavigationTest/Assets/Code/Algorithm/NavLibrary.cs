@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-public class NavLibrary
+public unsafe class NavLibrary
 {
+    public delegate int CB_CheckPointStatus(int row, int col);
     public enum Algorithm
     {
         DFS,
@@ -10,49 +11,68 @@ public class NavLibrary
         A_Star
     }
 
-    static IntPtr nativeArrRoad;
-    static int nRoadSize = 0;
+    static int nMaxRow = 0;
+    static int nMaxCol = 0;
+    static Int32[] arrMapData;
+    static Int32[] arrNavRoad;
+    static Int32 nRoadSize = 0;
 
-    [DllImport("NavigationLab")]
-    public static extern void InitMap(int row, int col);
+    public static void InitMap(int row, int col, CB_CheckPointStatus cbCheckPointStatus)
+    {
+        arrMapData = new Int32[(nMaxRow = row) * (nMaxCol = col)];
+        arrNavRoad = new Int32[row * col * 2];
+        for (int i = 0; i < row; ++i)
+            for (int j = 0; j < col; ++j)
+                arrMapData[i * col + j] = cbCheckPointStatus(i, j);
+    }
 
-    [DllImport("NavigationLab")]
-    public static extern void SetPointObstacle(int row, int col);
+    public static int GetPointID(int row, int col) { return row * nMaxCol + col; }
 
-    [DllImport("NavigationLab")]
-    static extern IntPtr Navigation_DFS(int startRow, int startCol, int targetRow, int targetCol, ref int size);
+    public static void SetPointObstacle(int row, int col, bool isObstacle)
+    {
+        arrMapData[row * nMaxCol + col] = isObstacle ? 0 : 1;
+    }
 
-    [DllImport("NavigationLab")]
-    static extern IntPtr Navigation_BFS(int startRow, int startCol, int targetRow, int targetCol, ref int size);
-
-    [DllImport("NavigationLab")]
-    static extern IntPtr Navigation_AStar(int startRow, int startCol, int targetRow, int targetCol, ref int size);
+    public static bool IsPointObstacle(int row, int col)
+    {
+        return arrMapData[row * nMaxCol + col] == 0;
+    }
 
     public static int Navigation(int startRow, int startCol, int targetRow, int targetCol, Algorithm algorithm = Algorithm.A_Star)
     {
         switch (algorithm)
         {
             case Algorithm.DFS:
-                nativeArrRoad = Navigation_DFS(startRow, startCol, targetRow, targetCol, ref nRoadSize);
+                nRoadSize = Navigation_DFS(startRow, startCol, targetRow, targetCol, nMaxRow, nMaxCol, arrMapData, arrNavRoad);
                 break;
             case Algorithm.BFS:
-                nativeArrRoad = Navigation_BFS(startRow, startCol, targetRow, targetCol, ref nRoadSize);
+                nRoadSize = Navigation_BFS(startRow, startCol, targetRow, targetCol, nMaxRow, nMaxCol, arrMapData, arrNavRoad);
                 break;
             case Algorithm.A_Star:
-                nativeArrRoad = Navigation_AStar(startRow, startCol, targetRow, targetCol, ref nRoadSize);
+                nRoadSize = Navigation_AStar(startRow, startCol, targetRow, targetCol, nMaxRow, nMaxCol, arrMapData, arrNavRoad);
                 break;
             default:
                 nRoadSize = 0;
                 break;
         }
-        return nRoadSize--;
+        int roadSize = nRoadSize--;
+        return roadSize;
     }
 
-    public static bool GetPoint(int index, ref int row, ref int col)
+    [DllImport("NavigationLab")]
+    static extern Int32 Navigation_DFS(int startRow, int startCol, int targetRow, int targetCol, int maxRow, int maxCol, Int32[] mapData, Int32[] road);
+
+    [DllImport("NavigationLab")]
+    static extern Int32 Navigation_BFS(int startRow, int startCol, int targetRow, int targetCol, int maxRow, int maxCol, Int32[] mapData, Int32[] road);
+
+    [DllImport("NavigationLab")]
+    static extern Int32 Navigation_AStar(int startRow, int startCol, int targetRow, int targetCol, int maxRow, int maxCol, Int32[] mapData, Int32[] road);
+
+    public static bool GetPoint(Int32 index, ref Int32 row, ref Int32 col)
     {
         if ((index = nRoadSize - index) < 0) return false;
-        row = Marshal.ReadInt32(nativeArrRoad, index * 2 * sizeof(int));
-        col = Marshal.ReadInt32(nativeArrRoad, (index * 2 + 1) * sizeof(int));
+        row = arrNavRoad[index * 2];
+        col = arrNavRoad[index * 2 + 1];
         return true;
     }
 }

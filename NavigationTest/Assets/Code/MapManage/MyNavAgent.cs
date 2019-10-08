@@ -127,7 +127,7 @@ public class MyNavAgent : MonoBehaviour
             if (col < minCol) minCol = col;
             if (row > maxRow) maxRow = row;
             if (col > maxCol) maxCol = col;
-            dicNavWay[MapManager.GetPointID(row, col)] = true;
+            dicNavWay[NavLibrary.GetPointID(row, col)] = true;
         }
         RectMeshCreater.GenerateParams param = new RectMeshCreater.GenerateParams()
         {
@@ -141,7 +141,7 @@ public class MyNavAgent : MonoBehaviour
             parent = MapManager.Instance.transform,
             cbIsGenerateCell = (cellRow, cellCol) =>
             {
-                return dicNavWay.ContainsKey(MapManager.GetPointID(cellRow, cellCol));
+                return dicNavWay.ContainsKey(NavLibrary.GetPointID(cellRow, cellCol));
             }
         };
         mfPath = RectMeshCreater.GenerateRectObj(new Vector3(minCol, 0.02f, minRow), param);
@@ -194,7 +194,7 @@ public class MyNavAgent : MonoBehaviour
         MapManager.NavPoint point = moveRode.First.Value;
         moveRode.RemoveFirst();
         Vector3 position = new Vector3(point.col, 0, point.row);
-        if (position == transform.position || point.type != 0)
+        if (position == transform.position || point.type < 1)
         {
             MoveToNextPoint_Local();
             return;

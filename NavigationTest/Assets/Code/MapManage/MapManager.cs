@@ -21,7 +21,6 @@ public class MapManager : MonoBehaviour
     }
 
     public List<List<NavPoint>> mapData = new List<List<NavPoint>>();
-    Dictionary<int, bool> dicObstacles = new Dictionary<int, bool>();
 
     private void Start()
     {
@@ -56,9 +55,9 @@ public class MapManager : MonoBehaviour
                     parent = objWallsRoot.transform,
                     cbIsGenerateCell = (cellRow, cellCol) =>
                     {
-                        if (IsNative) return dicObstacles.ContainsKey(GetPointID(cellRow, cellCol));
+                        if (IsNative) return NavLibrary.IsPointObstacle(cellRow, cellCol);
                         NavPoint point = GetPoint(cellRow, cellCol);
-                        return point && point.type != 0;
+                        return point && point.type < 1;
                     }
                 };
                 RectMeshCreater.GenerateRectObj(new Vector3(j * RectMeshCreater.MaxCol, 0.01f, i * RectMeshCreater.MaxRow), param);
@@ -72,18 +71,7 @@ public class MapManager : MonoBehaviour
 
     void InitNative()
     {
-        NavLibrary.InitMap(MaxRow, MaxCol);
-        for (int i = 0; i < MaxRow; ++i)
-        {
-            for (int j = 0; j < MaxCol; ++j)
-            {
-                if (!IsBrickCanPass(i, j))
-                {
-                    NavLibrary.SetPointObstacle(i, j);
-                    dicObstacles[GetPointID(i, j)] = true;
-                }
-            }
-        }
+        NavLibrary.InitMap(MaxRow, MaxCol, GeneratePointStatus);
     }
 
     void InitLocal()
@@ -95,7 +83,7 @@ public class MapManager : MonoBehaviour
             mapData.Add(col);
             for (int j = 0; j < MaxCol; ++j)
             {
-                col.Add(new NavPoint() { id = ++curID, row = i, col = j, type = IsBrickCanPass(i, j) ? 0 : 1 });
+                col.Add(new NavPoint() { id = ++curID, row = i, col = j, type = GeneratePointStatus(i, j) });
             }
         }
     }
@@ -106,12 +94,10 @@ public class MapManager : MonoBehaviour
         return mapData[row][col];
     }
 
-    bool IsBrickCanPass(int row, int col)
+    int GeneratePointStatus(int row, int col)
     {
-        return row == 0 && col == 0 ? true : Random.Range(0, 8) > 0;
+        return (row == 0 && col == 0) || Random.Range(0, 8) > 0 ? 1 : 0;
         //int total = row + col;
         //return total % 2 == 0 || total % 3 == 0 || total % 7 == 0;
     }
-
-    public static int GetPointID(int row, int col) { return row * MaxCol + col; }
 }

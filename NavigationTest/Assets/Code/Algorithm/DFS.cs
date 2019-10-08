@@ -27,7 +27,7 @@ public static class DFS
             listNavResult.AddFirst(point);
             return true;
         }
-        if (point.type != 0) return false;
+        if (point.type < 1) return false;
 
         List<MapManager.NavPoint> listNeighbors = new List<MapManager.NavPoint>(4);
         for (int i = 0, length = rowNeighbors.Length; i < length; ++i)

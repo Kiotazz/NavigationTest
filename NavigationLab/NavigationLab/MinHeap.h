@@ -98,19 +98,18 @@ private:
 	void heapifyTopDown(unsigned int p)
 	{
 		unsigned int size = m_stHeap.size();
-		unsigned int lc, rc, c;
+		unsigned int tmpc, c;
 		while (true)
 		{
-			lc = leftChild(p);
-			rc = rightChild(p);
+			tmpc = leftChild(p);
 			c = p;
-			if (lc < size && m_stHeap[lc] < m_stHeap[c])
+			if (tmpc < size && m_stHeap[tmpc] < m_stHeap[c])
 			{
-				c = lc;
+				c = tmpc;
 			}
-			if (rc < size && m_stHeap[rc] < m_stHeap[c])
+			if (++tmpc < size && m_stHeap[tmpc] < m_stHeap[c])
 			{
-				c = rc;
+				c = tmpc;
 			}
 			if (c == p)
 			{

@@ -15,3 +15,4 @@
 // 在此处引用程序需要的其他标头
 #define EXH(x) extern "C" __declspec(dllexport) x __stdcall
 #define EX(x) __declspec(dllexport) x __stdcall
+#define CINT const int
