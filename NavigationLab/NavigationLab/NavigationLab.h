@@ -2,7 +2,6 @@
 #include <map>
 #include <list>
 #include <cmath>
-#include <algorithm>
 #include "MinHeap.h"
 
 #ifndef __NavLab__

@@ -5,8 +5,8 @@
 #include "NavigationLab.h"
 using namespace std;
 
-const int rowNeighbors[]{ -1, 1, 0, 0 };
-const int colNeighbors[]{ 0, 0, -1, 1 };
+const int rowNeighbors[NeighborNum]{ -1, 1, 0, 0 };
+const int colNeighbors[NeighborNum]{ 0, 0, -1, 1 };
 
 struct PointRecord
 {
@@ -67,27 +67,70 @@ map<int, PointRecord_DFS*> mapClosedNodes_DFS;
 EX(int) Navigation_DFS(CINT startRow, CINT startCol, CINT targetRow, CINT targetCol, CINT maxRow, CINT maxCol, CINT* mapData, int* navPath)
 {
 	if (startRow == targetRow && startCol == targetCol) return 0;
-	vector<PointRecord_DFS> vecNeighbors;
-	vecNeighbors.reserve(4);
+	MinHeap<PointRecord_DFS> heapNeighbors(NeighborNum);
 	listOpenNodes_DFS.push_back(PointRecord_DFS(startRow, startCol, -1, abs(startRow - targetRow) + abs(startCol - targetCol)));
 	for (list<PointRecord_DFS>::iterator it = listOpenNodes_DFS.begin(), end = listOpenNodes_DFS.end(); it != end; ++it)
 	{
 		int curPointID = it->row * maxCol + it->col;
 		if (mapClosedNodes_DFS.find(curPointID) != mapClosedNodes_DFS.end()) continue;
 		mapClosedNodes_DFS[curPointID] = &*it;
-		vecNeighbors.clear();
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < NeighborNum; ++i)
 		{
 			int row = it->row + rowNeighbors[i], col = it->col + colNeighbors[i];
-			if (row < 0 || row >= maxRow || col < 0 || col >= maxCol || mapClosedNodes_DFS.find(row * maxCol + col) != mapClosedNodes_DFS.end())
+			if (row > -1 && row < maxRow && col > -1 && col < maxCol)
+				heapNeighbors.Insert(PointRecord_DFS(row, col, curPointID, abs(row - targetRow) + abs(col - targetCol)));
+		}
+
+		bool processed = false;
+		for (int i = 0, length = heapNeighbors.size(); i < length; ++i)
+		{
+			if (!mapData[heapNeighbors.m_stHeap[i].row * maxCol + heapNeighbors.m_stHeap[i].col])
+			{
+				for (int j = i + 1; j < length; ++j)
+				{
+					if ((heapNeighbors.m_stHeap[j].row == heapNeighbors.m_stHeap[i].row || heapNeighbors.m_stHeap[j].col == heapNeighbors.m_stHeap[i].col))
+					{
+						heapNeighbors.m_stHeap[j].score += 100;
+						break;
+					}
+				}
+				processed = true;
+			}
+		}
+		if (!processed)
+		{
+			for (int i = 0, length = heapNeighbors.size(); i < length; ++i)
+			{
+				if (mapClosedNodes_DFS.find(heapNeighbors.m_stHeap[i].row * maxCol + heapNeighbors.m_stHeap[i].col) != mapClosedNodes_DFS.end())
+				{
+					for (int j = i + 1; j < length; ++j)
+					{
+						if ((heapNeighbors.m_stHeap[j].row == heapNeighbors.m_stHeap[i].row || heapNeighbors.m_stHeap[j].col == heapNeighbors.m_stHeap[i].col))
+						{
+							heapNeighbors.m_stHeap[j].score += 100;
+							break;
+						}
+					}
+					processed = true;
+				}
+			}
+		}
+		if (processed) heapNeighbors.Heapify();
+
+		list<PointRecord_DFS>::iterator it2 = it;
+		bool isEnd = ++it2 == end;
+		for (int i = 0, length = heapNeighbors.size(); i < length; ++i)
+		{
+			PointRecord_DFS record = heapNeighbors.Extract();
+			if (!mapData[record.row * maxCol + record.col] || mapClosedNodes_DFS.find(record.row * maxCol + record.col) != mapClosedNodes_DFS.end())
 				continue;
-			if (row == targetRow && col == targetCol)
+			if (record.row == targetRow && record.col == targetCol)
 			{
 				int size = -1;
-				if (mapData[row * maxCol + col])
+				if (mapData[record.row * maxCol + record.col])
 				{
-					navPath[++size] = row;
-					navPath[++size] = col;
+					navPath[++size] = record.row;
+					navPath[++size] = record.col;
 				}
 				do
 				{
@@ -98,18 +141,10 @@ EX(int) Navigation_DFS(CINT startRow, CINT startCol, CINT targetRow, CINT target
 				mapClosedNodes_DFS.clear();
 				return ++size / 2;
 			}
-			if (mapData[row * maxCol + col])
-				vecNeighbors.push_back(PointRecord_DFS(row, col, curPointID, abs(row - targetRow) + abs(col - targetCol)));
-		}
-		sort(vecNeighbors.begin(), vecNeighbors.end());
-		list<PointRecord_DFS>::iterator it2 = it;
-		bool isEnd = ++it2 == end;
-		for (int i = 0, length = vecNeighbors.size(); i < length; ++i)
-		{
 			if (isEnd)
-				listOpenNodes_DFS.push_back(std::move(vecNeighbors[i]));
+				listOpenNodes_DFS.push_back(std::move(record));
 			else
-				listOpenNodes_DFS.insert(it2, std::move(vecNeighbors[i]));
+				listOpenNodes_DFS.insert(it2, std::move(record));
 		}
 	}
 	listOpenNodes_DFS.clear();
@@ -132,7 +167,7 @@ EX(int) Navigation_BFS(CINT startRow, CINT startCol, CINT targetRow, CINT target
 		if (mapClosedPoints_BFS.find(vecOpenNodes_BFS[curIndex].row * maxCol + vecOpenNodes_BFS[curIndex].col) != mapClosedPoints_BFS.end())
 			continue;
 		mapClosedPoints_BFS[vecOpenNodes_BFS[curIndex].row * maxCol + vecOpenNodes_BFS[curIndex].col] = true;
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < NeighborNum; ++i)
 		{
 			int row = vecOpenNodes_BFS[curIndex].row + rowNeighbors[i], col = vecOpenNodes_BFS[curIndex].col + colNeighbors[i];
 			if (row < 0 || row >= maxRow || col < 0 || col >= maxCol || mapClosedPoints_BFS.find(row * maxCol + col) != mapClosedPoints_BFS.end())
@@ -178,7 +213,7 @@ EX(int) Navigation_AStar(CINT startRow, CINT startCol, CINT targetRow, CINT targ
 		PointRecord_AStar curRecord = heapOpenNodes_AStar.Extract();
 		int curPointID = curRecord.row * maxCol + curRecord.col;
 		if (mapClosedNodes_AStar.find(curPointID) != mapClosedNodes_AStar.end()) continue;
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < NeighborNum; ++i)
 		{
 			int row = curRecord.row + rowNeighbors[i], col = curRecord.col + colNeighbors[i];
 			if (row < 0 || row >= maxRow || col < 0 || col >= maxCol || mapClosedNodes_AStar.find(row * maxCol + col) != mapClosedNodes_AStar.end())

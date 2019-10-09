@@ -5,10 +5,9 @@
 template<class T>
 class MinHeap
 {
-private:
+public:
 	std::vector<T> m_stHeap;
 
-public:
 	MinHeap() {}
 
 	MinHeap(unsigned int cap)

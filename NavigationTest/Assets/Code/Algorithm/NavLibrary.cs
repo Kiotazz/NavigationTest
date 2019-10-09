@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-public unsafe class NavLibrary
+public class NavLibrary
 {
     public delegate int CB_CheckPointStatus(int row, int col);
     public enum Algorithm
@@ -28,14 +28,14 @@ public unsafe class NavLibrary
 
     public static int GetPointID(int row, int col) { return row * nMaxCol + col; }
 
-    public static void SetPointObstacle(int row, int col, bool isObstacle)
+    public static void SetPointStatus(int row, int col, int status)
     {
-        arrMapData[row * nMaxCol + col] = isObstacle ? 0 : 1;
+        arrMapData[row * nMaxCol + col] = status;
     }
 
-    public static bool IsPointObstacle(int row, int col)
+    public static int GetPointStatus(int row, int col)
     {
-        return arrMapData[row * nMaxCol + col] == 0;
+        return arrMapData[row * nMaxCol + col];
     }
 
     public static int Navigation(int startRow, int startCol, int targetRow, int targetCol, Algorithm algorithm = Algorithm.A_Star)

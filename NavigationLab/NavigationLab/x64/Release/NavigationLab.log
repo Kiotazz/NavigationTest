@@ -1,33 +1,39 @@
 ﻿  NavigationLab.cpp
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(107): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(100): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(99): note: 编译 类 模板 成员函数 "void MinHeap<PointRecord_AStar>::heapifyTopDown(unsigned int)" 时
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(56): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::heapifyTopDown(unsigned int)”的引用
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(169): note: 参见对正在编译的 类 模板 实例化 "MinHeap<PointRecord_AStar>" 的引用
-c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(74): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(67): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Emplace<PointRecord_AStar>(Valt &&)”的引用
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(88): warning C4267: “return”: 从“size_t”转换到“unsigned int”，可能丢失数据
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(87): note: 编译 类 模板 成员函数 "unsigned int MinHeap<PointRecord_DFS>::size(void)" 时
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(85): note: 参见对正在编译的函数 模板 实例化“unsigned int MinHeap<PointRecord_DFS>::size(void)”的引用
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(70): note: 参见对正在编译的 类 模板 实例化 "MinHeap<PointRecord_DFS>" 的引用
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(39): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(38): note: 编译 类 模板 成员函数 "void MinHeap<PointRecord_DFS>::Heapify(void)" 时
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(118): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_DFS>::Heapify(void)”的引用
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(99): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(98): note: 编译 类 模板 成员函数 "void MinHeap<PointRecord_AStar>::heapifyTopDown(unsigned int)" 时
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(55): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::heapifyTopDown(unsigned int)”的引用
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(204): note: 参见对正在编译的 类 模板 实例化 "MinHeap<PointRecord_AStar>" 的引用
+c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(73): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(66): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Emplace<PointRecord_AStar>(Valt &&)”的引用
           with
           [
               Valt=PointRecord_AStar
           ]
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(67): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Emplace<PointRecord_AStar>(Valt &&)”的引用
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(66): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Emplace<PointRecord_AStar>(Valt &&)”的引用
           with
           [
               Valt=PointRecord_AStar
           ]
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(66): note: 编译 类 模板 成员函数 "void MinHeap<PointRecord_AStar>::Insert(T &&)" 时
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\minheap.h(65): note: 编译 类 模板 成员函数 "void MinHeap<PointRecord_AStar>::Insert(T &&)" 时
           with
           [
               T=PointRecord_AStar
           ]
-  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(175): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Insert(T &&)”的引用
+  c:\users\1\desktop\总文档\other projects\unity\navigationtest\navigationlab\navigationlab\navigationlab.cpp(210): note: 参见对正在编译的函数 模板 实例化“void MinHeap<PointRecord_AStar>::Insert(T &&)”的引用
           with
           [
               T=PointRecord_AStar
           ]
     正在创建库 C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.lib 和对象 C:\Users\1\Desktop\总文档\Other Projects\Unity\NavigationTest\NavigationLab\x64\Release\NavigationLab.exp
   正在生成代码
-  3 of 695 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+  0 of 680 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成

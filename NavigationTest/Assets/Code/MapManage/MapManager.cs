@@ -55,7 +55,7 @@ public class MapManager : MonoBehaviour
                     parent = objWallsRoot.transform,
                     cbIsGenerateCell = (cellRow, cellCol) =>
                     {
-                        if (IsNative) return NavLibrary.IsPointObstacle(cellRow, cellCol);
+                        if (IsNative) return NavLibrary.GetPointStatus(cellRow, cellCol) == 0;
                         NavPoint point = GetPoint(cellRow, cellCol);
                         return point && point.type < 1;
                     }
@@ -96,8 +96,14 @@ public class MapManager : MonoBehaviour
 
     int GeneratePointStatus(int row, int col)
     {
+        //if (row == 1 && col == 1) return 0;
+        //if (row == 1 && col == 2) return 0;
+        //if (row == 1 && col == 3) return 0;
+        //if (row == 2 && col == 1) return 0;
+        //if (row == 2 && col == 3) return 0;
+        //if (row == 3 && col == 1) return 0;
+        //if (row == 3 && col == 2) return 0;
+        //if (row == 3 && col == 3) return 0;
         return (row == 0 && col == 0) || Random.Range(0, 8) > 0 ? 1 : 0;
-        //int total = row + col;
-        //return total % 2 == 0 || total % 3 == 0 || total % 7 == 0;
     }
 }

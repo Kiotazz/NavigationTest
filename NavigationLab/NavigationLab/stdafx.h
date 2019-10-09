@@ -16,3 +16,4 @@
 #define EXH(x) extern "C" __declspec(dllexport) x __stdcall
 #define EX(x) __declspec(dllexport) x __stdcall
 #define CINT const int
+#define NeighborNum 4
